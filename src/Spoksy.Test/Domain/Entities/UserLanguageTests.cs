@@ -53,23 +53,10 @@ namespace Spoksy.Test.Domain.Entities
         }
 
         [Fact]
-        public void UpdateUserId_WithValidId_ShouldUpdateSuccessfully()
+        public void UpdateUserId_WithEmptyUserId_ShouldThrowDomainException()
         {
-            var userLanguage = new UserLanguage(_validUserId, _validLanguage, _initialProficiencyLevel);
-            var newUserId = Guid.NewGuid();
-
-            userLanguage.UpdateUserId(newUserId);
-
-            Assert.Equal(newUserId, userLanguage.UserId);
-        }
-
-        [Fact]
-        public void UpdateUserId_WithEmptyGuid_ShouldThrowDomainException()
-        {
-            var userLanguage = new UserLanguage(_validUserId, _validLanguage, _initialProficiencyLevel);
-
             var exception = Assert.Throws<DomainException>(() =>
-                userLanguage.UpdateUserId(Guid.Empty));
+               new UserLanguage(Guid.Empty, _validLanguage, _initialProficiencyLevel));
             Assert.Equal("User ID cannot be empty", exception.Message);
         }
     }

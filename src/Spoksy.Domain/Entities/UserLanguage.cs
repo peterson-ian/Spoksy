@@ -14,6 +14,9 @@ namespace Spoksy.Domain.Entities
 
         public UserLanguage(Guid userId, Language language, ProficiencyLevel proficiencyLevel)
         {
+            if (userId == Guid.Empty)
+                throw new DomainException("User ID cannot be empty");
+
             Id = Guid.NewGuid();
             UserId = userId;
             Language = language ?? throw new DomainException("Language cannot be null");
@@ -27,14 +30,6 @@ namespace Spoksy.Domain.Entities
                 throw new DomainException("New proficiency level must be different from the current one");
 
             ProficiencyLevel = newLevel;
-        }
-
-        public void UpdateUserId(Guid userId)
-        {
-            if (userId == Guid.Empty)
-                throw new DomainException("User ID cannot be empty");
-
-            UserId = userId;
         }
     }
 }
