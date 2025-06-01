@@ -20,9 +20,9 @@ namespace Spoksy.Domain.Entities{
 
         private const int MAX_MINUTES_TO_DELETE = 15;
 
-        private Message() { } 
+        private Message() { }
 
-        public Message(Guid chatId, Guid senderId, string content, Language? language)
+        public Message(Guid chatId, Guid senderId, string content, Language? language = null)
         {
             if (chatId == Guid.Empty)
                 throw new DomainException("Chat ID cannot be empty");
