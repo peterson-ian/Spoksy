@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Spoksy.Infrastructure\Spoksy.Infrastructure.csproj" />
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="dotnet test ..\Spoksy.Test\Spoksy.Test.csproj&#xA;if errorlevel 1 exit 1" />
+  </Target>
+
 </Project>

@@ -16,8 +16,9 @@
 
         public static readonly Country UnitedStates = new Country("US", "United States", Language.English, 21);
         public static readonly Country Brazil = new Country("BR", "Brazil", Language.Portuguese, 18);
+        public static readonly Country Spain = new Country("ES", "Spain", Language.Spanish, 18);
 
-        public static readonly List<Country> All = new List<Country>() { UnitedStates, Brazil };
+        public static readonly List<Country> All = new List<Country>() { UnitedStates, Brazil, Spain };
 
         public static Country GetByCode(string code)
         {

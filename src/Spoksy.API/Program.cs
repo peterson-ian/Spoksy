@@ -1,8 +1,13 @@
+using Spoksy.Infrastructure.Configurations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+string connectionString = builder.Configuration["DB_CONNECTION_STRING"] ?? throw new ArgumentException("Invalid string db conection");
+builder.Services.AddInfrastructure(connectionString);
 
 var app = builder.Build();
 
