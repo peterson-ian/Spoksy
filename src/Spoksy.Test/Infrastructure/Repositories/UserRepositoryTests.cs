@@ -20,7 +20,8 @@ namespace Spoksy.Test.Infrastructure.Repositories
                 name,
                 email,
                 DateTime.UtcNow.AddYears(-25),
-                Country.GetByCode("BR")
+                Country.GetByCode("BR"),
+                Guid.NewGuid().ToString()
             );
         }
 
@@ -41,6 +42,27 @@ namespace Spoksy.Test.Infrastructure.Repositories
         public async Task GetByEmailAsync_WithNonExistingEmail_ShouldReturnNull()
         {
             var result = await _userRepository.GetByEmailAsync("teste@email.com");
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetByIdentityProviderIdAsync_WithExistingIdenityProviderId_ShouldReturnUser()
+        {
+            var user = CreateValidUser();
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            var result = await _userRepository.GetByIdentityProviderIdAsync(user.IdentityProviderId);
+
+            Assert.NotNull(result);
+            Assert.Equal(user.IdentityProviderId, result.IdentityProviderId);
+        }
+
+        [Fact]
+        public async Task GetByIdentityProviderIdAsync_WithNonExistingIdenityProviderId_ShouldReturnNull()
+        {
+            var result = await _userRepository.GetByEmailAsync("testeguid");
 
             Assert.Null(result);
         }

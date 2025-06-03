@@ -20,7 +20,8 @@ namespace Spoksy.Test.Infrastructure.Repositories
                 name,
                 $"{name.ToLower()}@example.com",
                 DateTime.UtcNow.AddYears(-25),
-                Country.GetByCode("BR")
+                Country.GetByCode("BR"),
+                Guid.NewGuid().ToString()
             );
         }
 

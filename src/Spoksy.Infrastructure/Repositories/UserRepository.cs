@@ -15,6 +15,11 @@ namespace Spoksy.Infrastructure.Repositories
             return await _dbSet.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User?> GetByIdentityProviderIdAsync(string identityProviderId)
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.IdentityProviderId == identityProviderId);
+        }
+
         public async Task<bool> IsEmailUniqueAsync(string email)
         {
             return !await _dbSet.AnyAsync(u => u.Email == email);

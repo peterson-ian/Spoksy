@@ -6,21 +6,25 @@ namespace Spoksy.Domain.Entities
 {
     public class User : Entity
     {
+        public string IdentityProviderId { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
         public DateTime BirthDate { get; private set; }
         public Country CurrentCountry { get; private set; }
         public DateTime CreatedAt { get; private set; }
-        public DateTime? LastActiveAt { get; private set; }
-        
+        public DateTime? LastActivityAt { get; private set; }
+        public UserStatus Status { get; private set; }
         private User() { }
 
-        public User(string name, string email, DateTime birthDate, Country currentCountry)
+        public User(string name, string email, DateTime birthDate, Country currentCountry, string identityProviderId, UserStatus status = UserStatus.Active)
         {
             ValidateName(name);
             ValidateEmail(email);
             ValidateCountry(currentCountry);
             ValidateAge(birthDate, currentCountry.MinimumAge);
+
+            if (string.IsNullOrWhiteSpace(identityProviderId))
+                throw new DomainException("Identity Provider ID cannot be empty");
 
             Id = Guid.NewGuid();
             Name = name;
@@ -28,36 +32,72 @@ namespace Spoksy.Domain.Entities
             CurrentCountry = currentCountry;
             BirthDate = birthDate;
             CreatedAt = DateTime.UtcNow;
-            LastActiveAt = DateTime.UtcNow;
+            LastActivityAt = DateTime.UtcNow;
+            IdentityProviderId = identityProviderId;
+            Status = status;
+        }
+        public void BanUser()
+        {
+            Status = UserStatus.Banned;
+            UpdateLastActivity();
         }
 
-        public void UpdateLastActive()
+        public void SuspendUser()
         {
-            LastActiveAt = DateTime.UtcNow;
+            Status = UserStatus.Suspended;
+            UpdateLastActivity();
+        }
+
+        public void DeactivateUser()
+        {
+            Status = UserStatus.Inactive;
+            UpdateLastActivity();
+        }
+
+        public void ReactivateUser()
+        {
+            Status = UserStatus.Active;
+            UpdateLastActivity();
+        }
+
+        public bool IsActive()
+        {
+            return Status == UserStatus.Active;
+        }
+
+        public void UpdateLastActivity()
+        {
+            LastActivityAt = DateTime.UtcNow;
         }
 
         public void UpdateName(string newName)
         {
+            EnsureUserIsActive();
+
             ValidateName(newName);
             Name = newName;
-            UpdateLastActive();
+            UpdateLastActivity();
         }
 
         public void UpdateEmail(string newEmail)
         {
+            EnsureUserIsActive();
+
             ValidateEmail(newEmail);
             Email = newEmail;
-            UpdateLastActive();
+            UpdateLastActivity();
         }
 
         public void UpdateCurrentCountry(Country newCountry)
         {
+            EnsureUserIsActive();
+
             if (newCountry == null)
                 throw new DomainException("Country cannot be null");
 
             ValidateAge(BirthDate, newCountry.MinimumAge);
             CurrentCountry = newCountry;
-            UpdateLastActive();
+            UpdateLastActivity();
         }
 
         private void ValidateAge(DateTime birthDate, int minimumAge)
@@ -104,5 +144,12 @@ namespace Spoksy.Domain.Entities
             if (currentCountry == null)
                 throw new DomainException("Current Country cannot be null");
         }
+
+        private void EnsureUserIsActive()
+        {
+            if (!IsActive())
+                throw new DomainException("Operation not allowed. User is not active.");
+        }
+
     }
 }

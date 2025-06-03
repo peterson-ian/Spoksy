@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spoksy.Domain.Entities;
 using Spoksy.Domain.ValueObjects;
 
@@ -32,7 +33,7 @@ namespace Spoksy.Infrastructure.Configurations
                 .HasColumnName("created_at")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            builder.Property(u => u.LastActiveAt)
+            builder.Property(u => u.LastActivityAt)
                 .HasColumnName("last_active_at");
 
             builder.Property(u => u.CurrentCountry)
@@ -43,6 +44,14 @@ namespace Spoksy.Infrastructure.Configurations
                    v => v.Code, 
                    v => Country.GetByCode(v) 
                );
+
+            builder.Property(u => u.IdentityProviderId)
+                .HasColumnName("identity_provider_id");
+
+            builder.Property(c => c.Status)
+               .IsRequired()
+               .HasColumnName("status")
+               .HasConversion(new EnumToStringConverter<UserStatus>());
 
             builder.HasMany<UserLanguage>()
                 .WithOne()
