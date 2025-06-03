@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Spoksy.Domain.Entities;
 using Spoksy.Domain.ValueObjects;
 
-namespace Spoksy.Infrastructure.Configurations
+namespace Spoksy.Infrastructure.EntityMappings
 {
     public class ChatConfiguration : IEntityTypeConfiguration<Chat>
     {

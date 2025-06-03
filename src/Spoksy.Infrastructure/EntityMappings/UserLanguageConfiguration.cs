@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Spoksy.Domain.Entities;
 using Spoksy.Domain.ValueObjects;
 
-namespace Spoksy.Infrastructure.Configurations
+namespace Spoksy.Infrastructure.EntityMappings
 {
     public class UserLanguageConfiguration : IEntityTypeConfiguration<UserLanguage>
     {
