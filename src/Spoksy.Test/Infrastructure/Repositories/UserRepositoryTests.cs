@@ -18,14 +18,16 @@ namespace Spoksy.Test.Infrastructure.Repositories
 
         private User CreateUser(
             string name = "Test User",
-            string email = "test@example.com"
+            string email = "test@example.com",
+            string identityProviderId = null
         )
         {
             return new User(
                 name,
                 email,
                 DateTime.UtcNow.AddYears(-25),
-                Country.GetByCode("BR")
+                Country.GetByCode("BR"),
+                identityProviderId ?? Guid.NewGuid().ToString()
             );
         }
 
@@ -85,6 +87,35 @@ namespace Spoksy.Test.Infrastructure.Repositories
             await _unitOfWork.CommitAsync();
 
             var result = await _userRepository.GetByEmailAsync(email);
+
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetByIdentityProviderIdAsync_WithExistingId_ShouldReturnUser()
+        {
+            var identityProviderId = "auth0|123456";
+            var user = CreateUser(identityProviderId: identityProviderId);
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            var result = await _userRepository.GetByIdentityProviderIdAsync(identityProviderId);
+
+            Assert.NotNull(result);
+            Assert.Equal(user.Id, result.Id);
+            Assert.Equal(identityProviderId, result.IdentityProviderId);
+        }
+
+        [Fact]
+        public async Task GetByIdentityProviderIdAsync_WithInactiveUser_ShouldReturnNull()
+        {
+            var identityProviderId = "auth0|inactive";
+            var user = CreateUser(identityProviderId: identityProviderId);
+            user.DeactivateUser();
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            var result = await _userRepository.GetByIdentityProviderIdAsync(identityProviderId);
 
             Assert.Null(result);
         }

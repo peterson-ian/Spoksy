@@ -1,46 +1,93 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
+using Spoksy.API.Middlewares;
+using Spoksy.Application.Configurations;
+using Spoksy.Domain.Configurations;
 using Spoksy.Infrastructure.Configurations;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+// Documentation
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Info = new()
+        {
+            Title = "Spoksy API",
+            Version = "v1",
+            Description = "Spoksy is a collaborative platform that connects people from all over the world to practice languages in a relaxed, fun and free way. The idea is simple: those who master a language help those who are learning, creating a natural, cultural and humanized exchange."
+        };
 
-string connectionString = builder.Configuration["DB_CONNECTION_STRING"] ?? throw new ArgumentException("Invalid string db conection");
-builder.Services.AddInfrastructure(connectionString);
+        document.Components ??= new();
+
+        if (!document.Components.SecuritySchemes.ContainsKey("Bearer"))
+        {
+            document.Components.SecuritySchemes.Add("Bearer", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT",
+                Description = "JWT Authorization with Bearer Token."
+            });
+        }
+
+        return Task.CompletedTask;
+    });
+
+    options.AddOperationTransformer((operation, context, cancellationToken) =>
+    {
+        if (context.Description.ActionDescriptor.EndpointMetadata.OfType<IAuthorizeData>().Any())
+        {
+            operation.Security = new List<OpenApiSecurityRequirement>
+            {
+                new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                }
+            };
+        }
+
+        return Task.CompletedTask;
+    });
+});
+
+
+string connectionString = builder.Configuration["DB_CONNECTION_STRING"] ?? throw new ArgumentException("Invalid string db connection");
+builder.Services.AddInfrastructure(connectionString, builder.Configuration);
+
+builder.Services.AddAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseMiddleware<UserIdentificationMiddleware>();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
