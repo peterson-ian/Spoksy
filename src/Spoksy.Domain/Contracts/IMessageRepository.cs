@@ -1,12 +1,20 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Spoksy.Domain.Entities;
 
 namespace Spoksy.Domain.Contracts
 {
-    public interface IMessageRepository : IGenericRepository<Message>
+    public interface IMessageRepository
     {
-        Task<IEnumerable<Message>> GetMessagesByChatAsync(Guid chatId);
-        Task<IEnumerable<Message>> GetMessagesByUserAsync(Guid userId);
-        Task<int> GetUnreadMessagesCountAsync(Guid chatId, Guid userId);
-        Task<Message?> GetLastMessageFromChatAsync(Guid chatId);
+        Task<Message?> GetByIdAsync(Guid id);
+        Task<Message?> GetByIdForOwnerAsync(Guid messageId, Guid userId);
+        Task<IEnumerable<Message>> GetByChatIdAsync(Guid chatId);
+        Task<IEnumerable<Message>> GetByUserIdAsync(Guid userId);
+        Task<Message> AddAsync(Message message);
+        Task<Message> UpdateAsync(Message message);
+        Task<bool> ExistsAsync(Guid id);
+        Task<bool> IsUserMessageOwnerAsync(Guid messageId, Guid userId);
+        Task<int> GetChatMessageCountAsync(Guid chatId);
     }
 } 
