@@ -5,9 +5,7 @@ using Spoksy.API.Middlewares;
 using Spoksy.Application.Configurations;
 using Spoksy.Domain.Configurations;
 using Spoksy.Infrastructure.Configurations;
-using System.Reflection;
 using System.Text.Json.Serialization;
-using static System.Net.Mime.MediaTypeNames;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +68,15 @@ builder.Services.AddOpenApi(options =>
 string connectionString = builder.Configuration["DB_CONNECTION_STRING"] ?? throw new ArgumentException("Invalid string db connection");
 builder.Services.AddInfrastructure(connectionString, builder.Configuration);
 
+builder.Services.AddServices();
+builder.Services.AddCommandsAndQueries();
+
 builder.Services.AddAuthentication(builder.Configuration);
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 var app = builder.Build();
 

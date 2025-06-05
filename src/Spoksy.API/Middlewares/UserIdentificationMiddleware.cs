@@ -18,9 +18,11 @@ namespace Spoksy.API.Middlewares
         public async Task InvokeAsync(HttpContext context)
         {
             var endpoint = context.GetEndpoint();
-            var isAuthorized = endpoint?.Metadata.GetMetadata<IAuthorizeData>() != null;
 
-            if (!isAuthorized)
+            var hasAllowAnonymous = endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null;
+            var hasAuthorize = endpoint?.Metadata.GetMetadata<IAuthorizeData>() != null;
+
+            if (!hasAuthorize || hasAllowAnonymous)
             {
                 await _next(context);
                 return;
