@@ -34,7 +34,7 @@ namespace Spoksy.Domain.Services
                 ? await _repository.CountNativeLanguages(userId) 
                 : await _repository.CountNonNativeLanguages(userId);
 
-            if (languageCount <= 2)
+            if (languageCount < 2)
             {
                 string error = languageToRemoveIsNative
                     ? "You must have at least two native languages to remove one of them"

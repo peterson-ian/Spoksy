@@ -29,7 +29,6 @@
 
   <ItemGroup>
     <Folder Include="Domain\Services\" />
-    <Folder Include="API\" />
   </ItemGroup>
 
 </Project>

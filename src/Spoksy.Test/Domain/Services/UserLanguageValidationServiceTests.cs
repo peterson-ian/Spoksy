@@ -121,7 +121,7 @@ namespace Spoksy.Test.Domain.Services
         }
 
         [Fact]
-        public async Task EnsureLanguageCanBeRemoved_WithOnlyTwoNativeLanguages_ShouldThrowDomainException()
+        public async Task EnsureLanguageCanBeRemoved_WithOnlyOneNativeLanguages_ShouldThrowDomainException()
         {
             var userId = Guid.NewGuid();
             var languageId = Guid.NewGuid();
@@ -130,7 +130,7 @@ namespace Spoksy.Test.Domain.Services
             _repositoryMock.Setup(r => r.GetByIdAsync(languageId, userId))
                 .ReturnsAsync(userLanguage);
             _repositoryMock.Setup(r => r.CountNativeLanguages(userId))
-                .ReturnsAsync(2);
+                .ReturnsAsync(1);
 
             var exception = await Assert.ThrowsAsync<DomainException>(() =>
                 _service.EnsureLanguageCanBeRemoved(userId, languageId));
@@ -139,7 +139,7 @@ namespace Spoksy.Test.Domain.Services
         }
 
         [Fact]
-        public async Task EnsureLanguageCanBeRemoved_WithOnlyTwoNonNativeLanguages_ShouldThrowDomainException()
+        public async Task EnsureLanguageCanBeRemoved_WithOnlyOneNonNativeLanguages_ShouldThrowDomainException()
         {
             var userId = Guid.NewGuid();
             var languageId = Guid.NewGuid();
@@ -148,7 +148,7 @@ namespace Spoksy.Test.Domain.Services
             _repositoryMock.Setup(r => r.GetByIdAsync(languageId, userId))
                 .ReturnsAsync(userLanguage);
             _repositoryMock.Setup(r => r.CountNonNativeLanguages(userId))
-                .ReturnsAsync(2);
+                .ReturnsAsync(1);
 
             var exception = await Assert.ThrowsAsync<DomainException>(() =>
                 _service.EnsureLanguageCanBeRemoved(userId, languageId));
