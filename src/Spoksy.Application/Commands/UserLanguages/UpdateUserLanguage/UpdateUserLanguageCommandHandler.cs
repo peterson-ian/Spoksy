@@ -19,20 +19,20 @@ namespace Spoksy.Application.Commands.UserLanguages.UpdateUserLanguage
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<UserLanguageReponse>> Handle(Guid userId, UpdateUserLanguageCommand command)
+        public async Task<Result<UserLanguageResponse>> Handle(Guid userId, UpdateUserLanguageCommand command)
         {
             var userLanguage = await _userLanguageRepository.GetByIdAsync(command.Id, userId);
             if (userLanguage == null)
-                return ValidationResult<UserLanguageReponse>.Failure($"User language not found");
+                return NotFoundResult<UserLanguageResponse>.Create($"User language not found");
 
             userLanguage.UpdateProficiency(command.ProficiencyLevel);
             await _userLanguageRepository.UpdateAsync(userLanguage);
               
             await _unitOfWork.CommitAsync();
 
-            var response = UserLanguageReponse.FromEntity(userLanguage);
+            var response = UserLanguageResponse.FromEntity(userLanguage);
 
-            return Result<UserLanguageReponse>.Success(response);            
+            return Result<UserLanguageResponse>.Success(response);            
         }
     }
 } 

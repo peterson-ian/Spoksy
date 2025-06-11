@@ -13,14 +13,14 @@ namespace Spoksy.Application.Commands.Users.CreateUser
         private readonly IUserRepository _userRepository;
         private readonly IUserLanguageRepository _userLanguageRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserLanguageValidationService _userLanguageValidationService;
+        private readonly IUserLanguageValidationService _userLanguageValidationService;
         private readonly IIdentityProviderIntegration _identityProviderIntegration;
 
         public CreateUserCommandHandler(
             IUserRepository userRepository, 
             IUserLanguageRepository userLanguageRepository, 
             IUnitOfWork unitOfWork, 
-            UserLanguageValidationService userLanguageValidationService, 
+            IUserLanguageValidationService userLanguageValidationService, 
             IIdentityProviderIntegration identityProviderIntegration)
         {
             _userRepository = userRepository;
@@ -37,7 +37,7 @@ namespace Spoksy.Application.Commands.Users.CreateUser
 
             var country = Country.GetByCode(command.CountryCode);
             if (country == null)
-                return ValidationResult<UserDetailsResponse>.Failure($"Country {command.CountryCode} not found");
+                return NotFoundResult<UserDetailsResponse>.Create($"Country {command.CountryCode} not found");
 
             await _userLanguageValidationService.EnsureValidLanguagesForUserCreation(
                 command.Languages.Where(x => x.ProficiencyLevel == ProficiencyLevel.Native).Select(x => Language.GetByCode(x.LanguageCode)).ToList(),
@@ -71,7 +71,7 @@ namespace Spoksy.Application.Commands.Users.CreateUser
                 await _unitOfWork.RollbackAsync();
                 await _identityProviderIntegration.DeleteUserAsync(identityProviderId);
                 
-                return Result<UserDetailsResponse>.Failure("Failed to create user");
+                throw new ApplicationException("An error occurred while creating the user");
             }
         }
     }

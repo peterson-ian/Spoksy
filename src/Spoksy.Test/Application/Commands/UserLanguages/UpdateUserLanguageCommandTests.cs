@@ -82,7 +82,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
             var result = await _handler.Handle(_existingUser.Id, command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserLanguageReponse>);
+            Assert.True(result is NotFoundResult<UserLanguageResponse>);
             Assert.Contains("User language not found", result.Errors);
         }
 
@@ -98,7 +98,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
             var result = await _handler.Handle(Guid.NewGuid(), command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserLanguageReponse>);
+            Assert.True(result is NotFoundResult<UserLanguageResponse>);
             Assert.Contains("User language not found", result.Errors);
         }
     }

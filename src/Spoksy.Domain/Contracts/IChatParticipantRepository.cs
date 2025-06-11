@@ -9,6 +9,7 @@ namespace Spoksy.Domain.Contracts
     {
         Task<ChatParticipant?> GetByIdAsync(Guid id);
         Task<IEnumerable<ChatParticipant>> GetByChatIdAsync(Guid chatId);
+        Task<ChatParticipant?> GetByChatIdAndUserIdAsync(Guid chatId, Guid userId);
         Task<IEnumerable<ChatParticipant>> GetByUserIdAsync(Guid userId);
         Task<ChatParticipant> AddAsync(ChatParticipant participant);
         Task<ChatParticipant> UpdateAsync(ChatParticipant participant);

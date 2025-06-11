@@ -14,7 +14,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
     {
         private readonly IDeleteUserLanguageCommandHandler _handler;
         private readonly IUserLanguageRepository _userLanguageRepository;
-        private readonly UserLanguageValidationService _userLanguageValidationService;
+        private readonly IUserLanguageValidationService _userLanguageValidationService;
         private User _existingUser;
         private UserLanguage _existingUserLanguage;
         private UserLanguage _nativeLanguage;
@@ -84,22 +84,22 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
         }
 
         [Fact]
-        public async Task Handle_WithInvalidId_ShouldReturnValidationError()
+        public async Task Handle_WithInvalidId_ShouldReturnNotFoundResult()
         {
             var result = await _handler.Handle(_existingUser.Id, Guid.NewGuid());
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<string>);
+            Assert.True(result is NotFoundResult<string>);
             Assert.Contains("User language not found", result.Errors);
         }
 
         [Fact]
-        public async Task Handle_WithDifferentUserId_ShouldReturnValidationError()
+        public async Task Handle_WithDifferentUserId_ShouldReturnNotFoundResult()
         {
             var result = await _handler.Handle(Guid.NewGuid(), _existingUserLanguage.Id);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<string>);
+            Assert.True(result is NotFoundResult<string>);
             Assert.Contains("User language not found", result.Errors);
         }
 

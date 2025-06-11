@@ -19,7 +19,6 @@ namespace Spoksy.Test.Domain.Entities
             Assert.Equal(_secondaryLanguage, chat.SecondaryLanguage);
             Assert.NotEqual(Guid.Empty, chat.Id);
             Assert.Equal(ChatStatus.Active, chat.Status);
-            Assert.Equal(2, chat.MaxParticipants);
         }
 
         [Fact]

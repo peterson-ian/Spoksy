@@ -18,7 +18,7 @@ namespace Spoksy.Test.Application.Commands.Users
         private readonly IUserRepository _userRepository;
         private readonly IUserLanguageRepository _userLanguageRepository;
         private readonly Mock<IIdentityProviderIntegration> _identityProviderMock;
-        private readonly UserLanguageValidationService _userLanguageValidationService;
+        private readonly IUserLanguageValidationService _userLanguageValidationService;
 
         public CreateUserCommandTests() : base()
         {
@@ -106,7 +106,7 @@ namespace Spoksy.Test.Application.Commands.Users
         }
 
         [Fact]
-        public async Task Handle_WithInvalidCountry_ShouldReturnValidationError()
+        public async Task Handle_WithInvalidCountry_ShouldReturnNotFoundResult()
         {
             var command = new CreateUserCommand
             {
@@ -125,7 +125,7 @@ namespace Spoksy.Test.Application.Commands.Users
             var result = await _handler.Handle(command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserDetailsResponse>);
+            Assert.True(result is NotFoundResult<UserDetailsResponse>);
             Assert.Contains("Country XX not found", result.Errors);
         }
 

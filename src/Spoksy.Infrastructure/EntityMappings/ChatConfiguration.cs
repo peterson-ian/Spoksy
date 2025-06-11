@@ -16,7 +16,7 @@ namespace Spoksy.Infrastructure.EntityMappings
 
             builder.Property(c => c.CreatedAt)
                 .IsRequired()
-                .HasColumnName("created_At")
+                .HasColumnName("created_at")
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Property(c => c.LastActivityAt)
@@ -46,9 +46,6 @@ namespace Spoksy.Infrastructure.EntityMappings
                    c => Language.GetByCode(c)
                 );
 
-            builder.Property(c => c.MaxParticipants)
-                .IsRequired()
-                .HasDefaultValue(2);
 
             builder.HasMany<ChatParticipant>()
                 .WithOne()

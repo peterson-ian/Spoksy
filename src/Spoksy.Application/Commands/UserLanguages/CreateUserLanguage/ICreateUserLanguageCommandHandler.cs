@@ -5,6 +5,6 @@ namespace Spoksy.Application.Commands.UserLanguages.CreateUserLanguage
 {
     public interface ICreateUserLanguageCommandHandler
     {
-        Task<Result<UserLanguageReponse>> Handle(Guid userId, CreateUserLanguageCommand command);
+        Task<Result<UserLanguageResponse>> Handle(Guid userId, CreateUserLanguageCommand command);
     }
 } 

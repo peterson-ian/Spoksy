@@ -34,7 +34,7 @@ namespace Spoksy.Application.Commands.Users.UpdateUser
             {
                 var country = Country.GetByCode(command.CountryCode);
                 if (country == null)
-                    return ValidationResult<UserDetailsResponse>.Failure($"Country {command.CountryCode} not found");
+                    return NotFoundResult<UserDetailsResponse>.Create($"Country {command.CountryCode} not found");
 
                 user.UpdateCurrentCountry(country);
             }

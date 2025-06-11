@@ -27,8 +27,4 @@
     <ProjectReference Include="..\Spoksy.Domain\Spoksy.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Domain\Services\" />
-  </ItemGroup>
-
 </Project>

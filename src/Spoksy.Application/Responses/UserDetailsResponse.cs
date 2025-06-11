@@ -10,7 +10,7 @@ namespace Spoksy.Application.Responses
         public string Email { get; set; }
         public DateTime BirthDate { get; set; }
         public Country CurrentCountry { get; set; }
-        public List<UserLanguageReponse> Languages { get; set; } = new();
+        public List<UserLanguageResponse> Languages { get; set; } = new();
         public DateTime CreatedAt { get; set; }
         public DateTime? LastActivityAt { get; set; }
         public UserStatus? Status { get; set; }
@@ -29,7 +29,7 @@ namespace Spoksy.Application.Responses
                 CurrentCountry = user.CurrentCountry,
                 CountryCode = user.CurrentCountry.Code,
                 Languages = languages
-                                .Select(l => UserLanguageReponse.FromEntity(l))
+                                .Select(l => UserLanguageResponse.FromEntity(l))
                                 .ToList(),
                 CreatedAt = user.CreatedAt,
                 LastActivityAt = user.LastActivityAt,

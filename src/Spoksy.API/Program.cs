@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
+using Spoksy.API.Hubs;
 using Spoksy.API.Middlewares;
 using Spoksy.Application.Configurations;
 using Spoksy.Domain.Configurations;
@@ -78,6 +79,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddSignalR();
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("reactApp", builder =>
+    {
+        builder.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+    });
+}
+);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -90,10 +105,14 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseCors("reactApp");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<UserIdentificationMiddleware>();
 
 app.MapControllers();
+app.MapHub<ChatHub>("/hub/chat");
+
 
 app.Run();

@@ -21,17 +21,17 @@ namespace Spoksy.Infrastructure.Repositories
 
         public async Task<Message?> GetByIdAsync(Guid id)
         {
-            return await _dbSet.FirstOrDefaultAsync(m => m.Id == id);
+            return await _dbSet.FirstOrDefaultAsync(m => m.Id == id && !m.IsDelete);
         }
 
         public async Task<IEnumerable<Message>> GetByChatIdAsync(Guid chatId)
         {
-            return await _dbSet.Where(m => m.ChatId == chatId).OrderByDescending(m => m.SentAt).ToListAsync();
+            return await _dbSet.Where(m => m.ChatId == chatId && !m.IsDelete).OrderByDescending(m => m.SentAt).ToListAsync();
         }
 
         public async Task<IEnumerable<Message>> GetByUserIdAsync(Guid userId)
         {
-            return await _dbSet.Where(m => m.SenderId == userId).OrderByDescending(m => m.SentAt).ToListAsync();
+            return await _dbSet.Where(m => m.SenderId == userId && !m.IsDelete).OrderByDescending(m => m.SentAt).ToListAsync();
                 
         }
 
@@ -49,22 +49,22 @@ namespace Spoksy.Infrastructure.Repositories
 
         public async Task<bool> ExistsAsync(Guid id)
         {
-            return await _dbSet.AnyAsync(m => m.Id == id);
+            return await _dbSet.AnyAsync(m => m.Id == id && !m.IsDelete);
         }
 
         public async Task<bool> IsUserMessageOwnerAsync(Guid messageId, Guid userId)
         {
-            return await _dbSet.AnyAsync(m => m.Id == messageId && m.SenderId == userId);
+            return await _dbSet.AnyAsync(m => m.Id == messageId && m.SenderId == userId && !m.IsDelete);
         }
 
         public async Task<int> GetChatMessageCountAsync(Guid chatId)
         {
-            return await _dbSet.CountAsync(m => m.ChatId == chatId);
+            return await _dbSet.CountAsync(m => m.ChatId == chatId && !m.IsDelete);
         }
 
         public async Task<Message?> GetByIdForOwnerAsync(Guid messageId, Guid userId)
         {
-            return await _dbSet.FirstOrDefaultAsync(m => m.Id == messageId && m.SenderId == userId);
+            return await _dbSet.FirstOrDefaultAsync(m => m.Id == messageId && m.SenderId == userId && !m.IsDelete);
         }
     }
 }

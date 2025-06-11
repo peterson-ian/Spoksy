@@ -10,7 +10,7 @@ namespace Spoksy.Test.Domain.Services
     public class UserLanguageValidationServiceTests
     {
         private readonly Mock<IUserLanguageRepository> _repositoryMock;
-        private readonly UserLanguageValidationService _service;
+        private readonly IUserLanguageValidationService _service;
 
         public UserLanguageValidationServiceTests()
         {

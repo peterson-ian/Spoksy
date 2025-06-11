@@ -37,13 +37,13 @@ namespace Spoksy.API.Controllers
         }
 
         [HttpGet()]
-        [ProducesResponseType(typeof(ApiResponse<List<UserLanguageReponse>>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<List<UserLanguageResponse>>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAll()
         {
-            var userId = (Guid)HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _getAllUserLanguageHandler.Handle(userId!);
 
@@ -51,13 +51,13 @@ namespace Spoksy.API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ApiResponse<UserLanguageReponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserLanguageResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var userId = (Guid)HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _getUserLanguageHandler.Handle(userId!, id);
 
@@ -65,14 +65,14 @@ namespace Spoksy.API.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(ApiResponse<UserLanguageReponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserLanguageResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post([FromBody] CreateUserLanguageCommand command)
         {
-            var userId = (Guid)HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _createUserLanguageHandler.Handle(userId!, command);
 
@@ -80,14 +80,14 @@ namespace Spoksy.API.Controllers
         }
 
         [HttpPut]
-        [ProducesResponseType(typeof(ApiResponse<UserLanguageReponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserLanguageResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Put([FromBody] UpdateUserLanguageCommand command)
         {
-            var userId = (Guid)HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _updateUserLanguageHandler.Handle(userId!, command);
 
@@ -95,14 +95,14 @@ namespace Spoksy.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(ApiResponse<UserLanguageReponse>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse<UserLanguageResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var userId = (Guid)HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _deleteUserLanguageHandler.Handle(userId!, id);
 

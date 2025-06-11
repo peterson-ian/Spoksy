@@ -8,6 +8,7 @@ using Spoksy.Infrastructure.Repositories;
 using Spoksy.Application.Commons.Results;
 using Spoksy.Test.Infrastructure;
 using Spoksy.Application.Responses;
+using Spoksy.Application.Commons;
 
 namespace Spoksy.Test.Application.Commands.UserLanguages
 {
@@ -15,7 +16,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
     {
         private readonly ICreateUserLanguageCommandHandler _handler;
         private readonly IUserLanguageRepository _userLanguageRepository;
-        private readonly UserLanguageValidationService _userLanguageValidationService;
+        private readonly IUserLanguageValidationService _userLanguageValidationService;
         private User _existingUser;
 
         public CreateUserLanguageCommandTests() : base()
@@ -69,7 +70,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
         }
 
         [Fact]
-        public async Task Handle_WithInvalidLanguageCode_ShouldReturnValidationError()
+        public async Task Handle_WithInvalidLanguageCode_ShouldReturnNotFoundResult()
         {
             var command = new CreateUserLanguageCommand
             {
@@ -80,12 +81,12 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
             var result = await _handler.Handle(_existingUser.Id, command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserLanguageReponse>);
+            Assert.True(result is NotFoundResult<UserLanguageResponse>);
             Assert.Contains($"Language {command.LanguageCode} not found", result.Errors);
         }
 
         [Fact]
-        public async Task Handle_WithDuplicateLanguage_ShouldReturnValidationError()
+        public async Task Handle_WithDuplicateLanguage_ShouldReturnConflictResult()
         {
             var command = new CreateUserLanguageCommand
             {
@@ -97,7 +98,7 @@ namespace Spoksy.Test.Application.Commands.UserLanguages
             var result = await _handler.Handle(_existingUser.Id, command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserLanguageReponse>);
+            Assert.True(result is ConflictResult<UserLanguageResponse>);
             Assert.Contains($"Language English(en) is already registered for this user", result.Errors);
         }
     }
