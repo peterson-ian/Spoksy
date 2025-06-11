@@ -12,7 +12,6 @@ namespace Spoksy.Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public ChatStatus Status { get; private set; }
         public DateTime LastActivityAt { get; private set; }
-        public int MaxParticipants { get; private set; } = 2;
 
         private Chat() { }
 

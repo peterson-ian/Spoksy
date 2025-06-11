@@ -65,5 +65,13 @@ namespace Spoksy.Infrastructure.Repositories
         {
             return await _dbSet.CountAsync(p => p.ChatId == chatId);
         }
+
+        public async Task<ChatParticipant?> GetByChatIdAndUserIdAsync(Guid chatId, Guid userId)
+        {
+            return await _dbSet
+                .Where(p => p.UserId == userId && p.ChatId == chatId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
     }
 } 

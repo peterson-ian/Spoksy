@@ -3,6 +3,7 @@ using Spoksy.Application.Responses;
 using Spoksy.Application.Commons;
 using Spoksy.Domain.Contracts;
 using Spoksy.Domain.ValueObjects;
+using Spoksy.Application.Commons.Results;
 
 namespace Spoksy.Application.Queries.UserLanguages.GetUserLanguage
 {
@@ -14,7 +15,7 @@ namespace Spoksy.Application.Queries.UserLanguages.GetUserLanguage
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<Result<UserLanguageReponse>> Handle(Guid userId, Guid userLanguageId)
+        public async Task<Result<UserLanguageResponse>> Handle(Guid userId, Guid userLanguageId)
         {
             using var connection = _connectionFactory.CreateConnection();
             const string sql = @"
@@ -27,16 +28,16 @@ namespace Spoksy.Application.Queries.UserLanguages.GetUserLanguage
                     WHERE ul.user_id = @UserId 
                       AND ul.id = @UserLanguageId";
 
-            var language = await connection.QueryFirstOrDefaultAsync<UserLanguageReponse>(
+            var language = await connection.QueryFirstOrDefaultAsync<UserLanguageResponse>(
                 sql,
                 new { UserId = userId, UserLanguageId = userLanguageId });
 
             if (language is null)
-                return Result<UserLanguageReponse>.Failure("User language not found");
+                return NotFoundResult<UserLanguageResponse>.Failure("User language not found");
 
             language.Name = Language.GetByCode(language.Code)?.Name ?? "Unknown";
 
-            return Result<UserLanguageReponse>.Success(language);
+            return Result<UserLanguageResponse>.Success(language);
         }
     
     }

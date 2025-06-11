@@ -9,12 +9,12 @@ namespace Spoksy.Application.Commands.UserLanguages.DeleteUserLanguage
     {
         private readonly IUserLanguageRepository _userLanguageRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly UserLanguageValidationService _userLanguageValidationService;
+        private readonly IUserLanguageValidationService _userLanguageValidationService;
 
         public DeleteUserLanguageCommandHandler(
             IUserLanguageRepository userLanguageRepository,
             IUnitOfWork unitOfWork,
-            UserLanguageValidationService userLanguageValidationService)
+            IUserLanguageValidationService userLanguageValidationService)
         {
             _userLanguageRepository = userLanguageRepository;
             _unitOfWork = unitOfWork;
@@ -25,7 +25,7 @@ namespace Spoksy.Application.Commands.UserLanguages.DeleteUserLanguage
         {  
             var userLanguage = await _userLanguageRepository.GetByIdAsync(id, userId);
             if (userLanguage == null)
-                return ValidationResult<string>.Failure($"User language not found");
+                return NotFoundResult<string>.Create($"User language not found");
 
             await _userLanguageValidationService.EnsureLanguageCanBeRemoved(userId, id);
 

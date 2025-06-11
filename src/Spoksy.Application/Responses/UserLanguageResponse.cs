@@ -3,7 +3,7 @@ using Spoksy.Domain.ValueObjects;
 
 namespace Spoksy.Application.Responses
 {
-    public record UserLanguageReponse
+    public record UserLanguageResponse
     {
         public Guid Id { get; set; }
         public string Code { get; set; }
@@ -11,9 +11,9 @@ namespace Spoksy.Application.Responses
         public ProficiencyLevel ProficiencyLevel { get; set; }
         public DateTime StartedLearningOn { get; set; }
 
-        public static UserLanguageReponse FromEntity(UserLanguage entity)
+        public static UserLanguageResponse FromEntity(UserLanguage entity)
         {
-            return new UserLanguageReponse
+            return new UserLanguageResponse
             {
                 Id = entity.Id,
                 Code = entity.Language.Code,

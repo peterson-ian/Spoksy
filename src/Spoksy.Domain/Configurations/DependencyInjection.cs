@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Spoksy.Domain.Contracts;
 using Spoksy.Domain.Services;
 
 namespace Spoksy.Domain.Configurations
@@ -8,7 +9,9 @@ namespace Spoksy.Domain.Configurations
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             // Domain Services 
-            services.AddScoped<UserLanguageValidationService>();
+            services.AddScoped<IUserLanguageValidationService, UserLanguageValidationService>();
+            services.AddScoped<IKnowledgeExchangeValidationService, KnowledgeExchangeValidationService>();
+            services.AddScoped<IChatValidationService, ChatValidationService>();
 
             return services;
         }

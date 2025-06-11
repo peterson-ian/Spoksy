@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Polly;
 using Spoksy.API.Common;
 using Spoksy.API.Models;
 using Spoksy.Application.Commands.Users.CreateUser;
@@ -36,7 +37,7 @@ namespace Spoksy.API.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetUser()
         {
-            var userId = (Guid) HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _getUserHandler.Handle(userId!);
 
@@ -50,7 +51,7 @@ namespace Spoksy.API.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> PutUser(UpdateUserCommand updateUserCommand)
         {
-            var userId = (Guid) HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _updateUserHandler.Handle(userId!, updateUserCommand);
 
@@ -64,7 +65,7 @@ namespace Spoksy.API.Controllers
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeactivateUser()
         {
-            var userId = (Guid) HttpContext.Items["UserId"];
+            var userId = Guid.Parse(User.FindFirst("user_id")?.Value);
 
             var result = await _deactivateUserHandler.Handle(userId!);
 

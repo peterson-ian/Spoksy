@@ -136,7 +136,7 @@ namespace Spoksy.Test.Application.Commands.Users
             var result = await _handler.Handle(_existingUser.Id, command);
 
             Assert.False(result.IsSuccess);
-            Assert.True(result is ValidationResult<UserDetailsResponse>);
+            Assert.True(result is NotFoundResult<UserDetailsResponse>);
             Assert.Contains("Country XX not found", result.Errors);
 
             var unchangedUser = await _userRepository.GetByIdAsync(_existingUser.Id);

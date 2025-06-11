@@ -3,6 +3,7 @@ using Spoksy.Domain.Contracts;
 using Spoksy.Domain.Entities;
 using Spoksy.Domain.ValueObjects;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Spoksy.API.Middlewares
 {
@@ -52,6 +53,13 @@ namespace Spoksy.API.Middlewares
             }
 
             context.Items["UserId"] = user.Id;
+
+            var identity = context.User.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                identity.AddClaim(new Claim("user_id", user.Id.ToString()));
+            }
 
             await _next(context);
         }

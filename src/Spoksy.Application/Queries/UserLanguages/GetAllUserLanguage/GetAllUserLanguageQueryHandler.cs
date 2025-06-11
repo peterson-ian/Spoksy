@@ -14,7 +14,7 @@ namespace Spoksy.Application.Queries.UserLanguages.GetAllUserLanguage
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<Result<List<UserLanguageReponse>>> Handle(Guid userId)
+        public async Task<Result<List<UserLanguageResponse>>> Handle(Guid userId)
         {
             using var connection = _connectionFactory.CreateConnection();
             const string sql = @"
@@ -26,7 +26,7 @@ namespace Spoksy.Application.Queries.UserLanguages.GetAllUserLanguage
                 FROM user_languages ul
                 WHERE ul.user_id = @UserId";
 
-            var languages = await connection.QueryAsync<UserLanguageReponse>(
+            var languages = await connection.QueryAsync<UserLanguageResponse>(
                 sql,
                 new { UserId = userId });
 
@@ -36,7 +36,7 @@ namespace Spoksy.Application.Queries.UserLanguages.GetAllUserLanguage
                 return language;
             }).ToList();
 
-            return Result<List<UserLanguageReponse>>.Success(result.ToList());
+            return Result<List<UserLanguageResponse>>.Success(result.ToList());
         }
     
     }

@@ -4,7 +4,7 @@ using Spoksy.Domain.ValueObjects;
 
 namespace Spoksy.Domain.Services
 {
-    public class UserLanguageValidationService
+    public class UserLanguageValidationService : IUserLanguageValidationService
     {
         private readonly IUserLanguageRepository _repository;
 

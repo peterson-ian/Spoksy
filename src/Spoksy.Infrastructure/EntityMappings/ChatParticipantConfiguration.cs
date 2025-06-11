@@ -14,11 +14,11 @@ namespace Spoksy.Infrastructure.EntityMappings
 
             builder.Property(cp => cp.UserId)
                 .IsRequired()
-                .HasColumnName("user_Id");
+                .HasColumnName("user_id");
 
             builder.Property(cp => cp.ChatId)
                 .IsRequired()
-                .HasColumnName("chat_Id");
+                .HasColumnName("chat_id");
 
             builder.Property(cp => cp.JoinAt)
                 .IsRequired()
@@ -26,7 +26,7 @@ namespace Spoksy.Infrastructure.EntityMappings
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             builder.Property(cp => cp.LeaveAt)
-                .HasColumnName("last_active_at");
+                .HasColumnName("leave_at");
 
             builder.HasIndex(cp => new { cp.ChatId, cp.UserId })
                 .IsUnique();

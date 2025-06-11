@@ -3,6 +3,7 @@ using Spoksy.Application.Responses;
 using Spoksy.Application.Commons;
 using Spoksy.Domain.Contracts;
 using Spoksy.Domain.ValueObjects;
+using Spoksy.Application.Commons.Results;
 
 namespace Spoksy.Application.Queries.Users.GetUser
 {
@@ -39,7 +40,7 @@ namespace Spoksy.Application.Queries.Users.GetUser
 
             var userDictionary = new Dictionary<Guid, UserDetailsResponse>();
 
-            var users = await connection.QueryAsync<UserDetailsResponse, UserLanguageReponse, UserDetailsResponse>(
+            var users = await connection.QueryAsync<UserDetailsResponse, UserLanguageResponse, UserDetailsResponse>(
                 sql,
                 (user, language) =>
                 {
@@ -64,7 +65,7 @@ namespace Spoksy.Application.Queries.Users.GetUser
 
             if (userDictionary.Count == 0)
             {
-                return Result<UserDetailsResponse>.Failure("User not found.");
+                return NotFoundResult<UserDetailsResponse>.Create("User not found.");
             }
             
 
