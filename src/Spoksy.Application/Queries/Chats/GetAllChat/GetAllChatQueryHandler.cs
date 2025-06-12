@@ -29,7 +29,7 @@ namespace Spoksy.Application.Queries.Chats.GetAllChat
                     JOIN chat_participants cp ON cp.chat_id = c.id
                     WHERE cp.user_id = @UserId
                     ORDER BY c.last_active_at DESC
-                    OFFSET @Offset LIMIT @Limit
+                    LIMIT @Limit OFFSET @Offset 
                 ),
                 recipients AS (
                     SELECT 
@@ -43,7 +43,7 @@ namespace Spoksy.Application.Queries.Chats.GetAllChat
                     WHERE cp.user_id != @UserId AND cp.chat_id IN (SELECT id FROM user_chats)
                 ),
                 last_messages AS (
-                    SELECT DISTINCT ON (m.chat_id)
+                    SELECT
                         m.chat_id,
                         m.id AS last_message_id,
                         m.content AS last_message_content,
@@ -52,9 +52,17 @@ namespace Spoksy.Application.Queries.Chats.GetAllChat
                         m.is_read AS last_message_is_read,
                         m.sender_id AS last_message_sender_id,
                         m.language AS last_message_language
-                    FROM messages m
-                    WHERE m.chat_id IN (SELECT id FROM user_chats) AND NOT m.is_delete
-                    ORDER BY m.chat_id, m.sent_at DESC
+                    FROM (
+                        SELECT 
+                            m.*,
+                            ROW_NUMBER() OVER (
+                                PARTITION BY m.chat_id 
+                                ORDER BY m.sent_at DESC, m.id DESC
+                            ) AS rn
+                        FROM messages m
+                        WHERE m.chat_id IN (SELECT id FROM user_chats) AND NOT m.is_delete
+                    ) m
+                    WHERE m.rn = 1
                 )
                 SELECT 
                     uc.id,

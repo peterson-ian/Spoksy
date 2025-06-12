@@ -33,7 +33,7 @@ namespace Spoksy.Application.Queries.UserLanguages.GetUserLanguage
                 new { UserId = userId, UserLanguageId = userLanguageId });
 
             if (language is null)
-                return NotFoundResult<UserLanguageResponse>.Failure("User language not found");
+                return NotFoundResult<UserLanguageResponse>.Create("User language not found");
 
             language.Name = Language.GetByCode(language.Code)?.Name ?? "Unknown";
 

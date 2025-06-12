@@ -42,7 +42,7 @@ namespace Spoksy.Application.Queries.Messages.GetMessage
                 new { ChatId = chatId, MessageId = messageId });
 
             if (message is null)
-                return NotFoundResult<MessageResponse>.Failure("Message not found");
+                return NotFoundResult<MessageResponse>.Create("Message not found");
 
             if (!string.IsNullOrWhiteSpace(message.LanguageCode))
                 message.Language = Language.GetByCode(message.LanguageCode);

@@ -36,7 +36,7 @@ namespace Spoksy.Application.Queries.Messages.GetAllMessage
                 FROM messages m
                 WHERE m.chat_id = @ChatId AND NOT m.is_delete
                 ORDER BY m.sent_at DESC
-                OFFSET @Offset LIMIT @Limit;
+                LIMIT @Limit OFFSET @Offset ;
             ";
 
             var offset = (page - 1) * _pageSize;
