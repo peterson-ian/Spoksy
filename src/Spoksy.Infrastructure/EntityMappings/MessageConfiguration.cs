@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Spoksy.Domain.Entities;
+using Spoksy.Domain.ValueObjects;
 
 namespace Spoksy.Infrastructure.EntityMappings
 {
@@ -51,6 +52,21 @@ namespace Spoksy.Infrastructure.EntityMappings
                 .HasDefaultValue(false)
                 .HasColumnName("is_delete");
 
+            builder.Property(m => m.Language)
+               .HasMaxLength(10)
+               .HasColumnName("language")
+               .HasConversion(
+                  m => m.Code,
+                  m => Language.GetByCode(m)
+               ); ;
+
+            builder.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(ul => ul.SenderId);
+
+            builder.HasOne<Chat>()
+                 .WithMany()
+                 .HasForeignKey(ul => ul.ChatId);
         }
     }
 } 
