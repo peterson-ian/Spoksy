@@ -1,0 +1,47 @@
+{
+  "realm": "spoksy-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "spoksy-api-client",
+      "name": "Spoksy API Client (Frontend)",
+      "publicClient": true,
+      "redirectUris": [
+        "http://localhost:*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "protocol": "openid-connect",
+      "enabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "authorizationServicesEnabled": false,
+      "attributes": {
+        "post.logout.redirect.uris": "+"
+      }
+    },
+    {
+      "clientId": "spoksy-admin-api-client",
+      "name": "Spoksy Admin API Client (Backend)",
+      "publicClient": false,
+      "redirectUris": [],
+      "protocol": "openid-connect",
+      "enabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "pOH6MjPlU8V4Hf2CZNRUBqHmcCvzZT0X",
+      "authorizationServicesEnabled": false,
+      "access": {
+        "view": true,
+        "configure": true,
+        "manage": true
+      }
+    }
+  ]
+}
