@@ -1,0 +1,88 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_api
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: spoksy
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./.docker/postgres-api:/var/lib/postgresql/data
+    networks:
+      - share-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d spoksy -h localhost -p 5432"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db-keycloak:
+    image: postgres:15
+    container_name: keycloak_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloakpass
+    volumes:
+      - ./.docker/postgres:/var/lib/postgresql/data
+    networks:
+      - share-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: keycloak
+    restart: always
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db-keycloak:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloakpass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: adminpassword
+    volumes:
+      - ./realm-config.json:/opt/keycloak/data/import/realm-config.json
+    ports:
+      - "8080:8080"
+    depends_on:
+      db-keycloak:
+        condition: service_healthy
+    networks:
+      - share-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/realms/master/.well-known/openid-configuration > /dev/null"]     
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  spoksy.api:
+    image: spoksyapi
+    build:
+      context: .
+      dockerfile: ../Spoksy.API/Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "7069:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - share-network
+
+networks:
+  share-network:
+    driver: bridge
